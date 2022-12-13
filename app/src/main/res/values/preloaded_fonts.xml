@@ -3,5 +3,6 @@
     <array name="preloaded_fonts" translatable="false">
         <item>@font/almendra</item>
         <item>@font/be_vietnam_bold</item>
+        <item>@font/cherry_cream_soda</item>
     </array>
 </resources>

@@ -15,10 +15,22 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
+
+
         Handler(Looper.getMainLooper()).postDelayed({
-            val intent = Intent(this, SignIn::class.java)
-            startActivity(intent)
-            finish()
+            // Shared Preference Code
+            val pref = getSharedPreferences("login", MODE_PRIVATE)
+            val check = pref.getBoolean("flag", false)
+            if (check) {
+                // for true Login (User already login )
+                startActivity(Intent(this@MainActivity, HomeActivity::class.java))
+                finish()
+            }
+            else{
+                val intent = Intent(this, SignIn::class.java)
+                startActivity(intent)
+                finish()
+            }
         }, 2000)
 
     }

@@ -43,6 +43,11 @@ class SignUp : AppCompatActivity() {
                     firebaseAuth.createUserWithEmailAndPassword(email, password)
                         .addOnCompleteListener{
                             if (it.isSuccessful) {
+                                // Shared Preference
+                                val pref = getSharedPreferences("login", MODE_PRIVATE)
+                                val editor = pref.edit()
+                                editor.putBoolean("flag", true)
+                                editor.apply()
                                 startActivity(Intent(this, HomeActivity::class.java))
                                 finish()
                             } else {

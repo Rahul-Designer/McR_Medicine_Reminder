@@ -24,7 +24,7 @@
             android:gravity="center"
             android:orientation="horizontal"
             android:paddingHorizontal="20dp"
-            android:paddingVertical="15dp"
+            android:paddingVertical="10dp"
             android:weightSum="4">
 
             <LinearLayout
@@ -38,10 +38,18 @@
                 android:paddingHorizontal="1dp">
 
                 <ImageView
-                    android:id="@+id/reminderImg"
-                    android:layout_width="20dp"
+                    android:id="@+id/reminderImgDefault"
+                    android:layout_width="22dp"
                     android:layout_height="wrap_content"
                     android:adjustViewBounds="true"
+                    android:visibility="gone"
+                    android:src="@drawable/reminder_default" />
+                <ImageView
+                    android:id="@+id/reminderImgSelected"
+                    android:layout_width="22dp"
+                    android:layout_height="wrap_content"
+                    android:adjustViewBounds="true"
+                    android:visibility="visible"
                     android:src="@drawable/reminder_selected" />
 
                 <TextView
@@ -51,7 +59,7 @@
                     android:layout_marginStart="10dp"
                     android:text="Reminder"
                     android:textColor="@color/colour1"
-                    android:textSize="16sp"
+                    android:textSize="18sp"
                     android:textStyle="bold" />
 
             </LinearLayout>
@@ -67,19 +75,19 @@
 
                 <ImageView
                     android:id="@+id/sellImg"
-                    android:layout_width="20dp"
+                    android:layout_width="25dp"
                     android:layout_height="wrap_content"
                     android:adjustViewBounds="true"
-                    android:src="@drawable/sell_selected" />
+                    android:src="@drawable/donate_default" />
 
                 <TextView
                     android:id="@+id/sellText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
-                    android:text="Sell"
+                    android:text="Donate"
                     android:textColor="@color/colour1"
-                    android:textSize="16sp"
+                    android:textSize="18sp"
                     android:textStyle="bold"
                     android:visibility="gone" />
 
@@ -96,7 +104,7 @@
 
                 <ImageView
                     android:id="@+id/tipImg"
-                    android:layout_width="20dp"
+                    android:layout_width="25dp"
                     android:layout_height="wrap_content"
                     android:adjustViewBounds="true"
                     android:src="@drawable/tip_selected" />
@@ -108,7 +116,7 @@
                     android:layout_marginStart="10dp"
                     android:text="Tips"
                     android:textColor="@color/colour1"
-                    android:textSize="16sp"
+                    android:textSize="18sp"
                     android:textStyle="bold"
                     android:visibility="gone" />
 
@@ -125,7 +133,7 @@
 
                 <ImageView
                     android:id="@+id/dashboardImg"
-                    android:layout_width="20dp"
+                    android:layout_width="22dp"
                     android:layout_height="wrap_content"
                     android:adjustViewBounds="true"
                     android:src="@drawable/dashboard_selected" />
@@ -137,7 +145,7 @@
                     android:layout_marginStart="10dp"
                     android:text="Dashboard"
                     android:textColor="@color/colour1"
-                    android:textSize="16sp"
+                    android:textSize="18sp"
                     android:textStyle="bold"
                     android:visibility="gone" />
 

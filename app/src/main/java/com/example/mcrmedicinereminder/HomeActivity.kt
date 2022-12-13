@@ -9,8 +9,8 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.example.mcrmedicinereminder.databinding.ActivityHomeBinding
 import com.example.mcrmedicinereminder.fragment.DashboardFragment
+import com.example.mcrmedicinereminder.fragment.DonateFragment
 import com.example.mcrmedicinereminder.fragment.ReminderFragment
-import com.example.mcrmedicinereminder.fragment.SellFragment
 import com.example.mcrmedicinereminder.fragment.TipFragment
 
 class HomeActivity : AppCompatActivity() {
@@ -23,22 +23,26 @@ class HomeActivity : AppCompatActivity() {
         // set default fragment
         replaceFragment(ReminderFragment())
 
-
         binding.reminderLayout.setOnClickListener {
             if (selectedTab != 1) {
 
                 // change fragment
                 replaceFragment(ReminderFragment())
 
-                binding.reminderText.visibility = View.VISIBLE
+                // set layout and image visibility
                 binding.sellLayout.background = null
                 binding.tipLayout.background = null
                 binding.dashboardLayout.background = null
                 binding.reminderLayout.setBackgroundResource(R.drawable.nav_round_bg)
+                binding.reminderImgSelected.visibility = View.VISIBLE
+                binding.reminderImgDefault.visibility = View.GONE
+                binding.dashboardImg.setBackgroundResource(R.drawable.dashboard_selected)
+                binding.sellImg.setBackgroundResource(R.drawable.donate_default)
+                binding.tipImg.setBackgroundResource(R.drawable.tip_selected)
 
 
                 // set other nav item text visibility
-
+                binding.reminderText.visibility = View.VISIBLE
                 binding.sellText.visibility = View.GONE
                 binding.tipText.visibility = View.GONE
                 binding.dashboardText.visibility = View.GONE
@@ -66,14 +70,21 @@ class HomeActivity : AppCompatActivity() {
         binding.sellLayout.setOnClickListener {
             if (selectedTab != 2) {
                 // change fragment
-                replaceFragment(SellFragment())
-                binding.sellText.visibility = View.VISIBLE
+                replaceFragment(DonateFragment())
+
+                // set layout and image visibility
                 binding.reminderLayout.background = null
                 binding.tipLayout.background = null
                 binding.dashboardLayout.background = null
                 binding.sellLayout.setBackgroundResource(R.drawable.nav_round_bg)
+                binding.reminderImgDefault.visibility = View.VISIBLE
+                binding.reminderImgSelected.visibility = View.GONE
+                binding.dashboardImg.setBackgroundResource(R.drawable.dashboard_selected)
+                binding.sellImg.setBackgroundResource(R.drawable.donate_selected)
+                binding.tipImg.setBackgroundResource(R.drawable.tip_selected)
 
                 // set other nav item text visibility
+                binding.sellText.visibility = View.VISIBLE
                 binding.reminderText.visibility = View.GONE
                 binding.tipText.visibility = View.GONE
                 binding.dashboardText.visibility = View.GONE
@@ -102,14 +113,20 @@ class HomeActivity : AppCompatActivity() {
 
                 // change fragment
                 replaceFragment(TipFragment())
-                binding.tipText.visibility = View.VISIBLE
+                // set layout and image visibility
                 binding.sellLayout.background = null
                 binding.reminderText.background = null
                 binding.dashboardLayout.background = null
                 binding.tipLayout.setBackgroundResource(R.drawable.nav_round_bg)
+                binding.dashboardImg.setBackgroundResource(R.drawable.dashboard_selected)
+                binding.reminderImgDefault.visibility = View.VISIBLE
+                binding.reminderImgSelected.visibility = View.GONE
+                binding.sellImg.setBackgroundResource(R.drawable.donate_default)
+                binding.tipImg.setBackgroundResource(R.drawable.tips)
 
                 // set other nav item text visibility
                 binding.sellText.visibility = View.GONE
+                binding.tipText.visibility = View.VISIBLE
                 binding.reminderText.visibility = View.GONE
                 binding.dashboardText.visibility = View.GONE
 
@@ -136,14 +153,20 @@ class HomeActivity : AppCompatActivity() {
             if (selectedTab != 4) {
                 // change fragment
                 replaceFragment(DashboardFragment())
-                binding.dashboardText.visibility = View.VISIBLE
+                // set layout and image visibility
                 binding.sellLayout.background = null
                 binding.tipLayout.background = null
                 binding.reminderLayout.background = null
                 binding.dashboardLayout.setBackgroundResource(R.drawable.nav_round_bg)
+                binding.sellImg.setBackgroundResource(R.drawable.donate_default)
+                binding.reminderImgDefault.visibility = View.VISIBLE
+                binding.reminderImgSelected.visibility = View.GONE
+                binding.dashboardImg.setBackgroundResource(R.drawable.dashboard)
+                binding.tipImg.setBackgroundResource(R.drawable.tip_selected)
 
                 // set other nav item text visibility
                 binding.sellText.visibility = View.GONE
+                binding.dashboardText.visibility = View.VISIBLE
                 binding.tipText.visibility = View.GONE
                 binding.reminderText.visibility = View.GONE
 

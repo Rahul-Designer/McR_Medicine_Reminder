@@ -4,9 +4,13 @@ import android.app.Activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.MotionEvent
+import android.view.View
+import android.view.View.OnTouchListener
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.databinding.DataBindingUtil
+import androidx.databinding.Observable
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -15,10 +19,13 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
+import java.util.Objects
+import kotlin.properties.Delegates
 
 class SignIn : AppCompatActivity() {
     private lateinit var firebaseAuth: FirebaseAuth
     lateinit var binding: ActivitySignInBinding
+    var passwordVisible by Delegates.notNull<Boolean>()
     private lateinit var googleSignInClient: GoogleSignInClient
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,6 +45,11 @@ class SignIn : AppCompatActivity() {
             else {
                 firebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener {
                     if (it.isSuccessful) {
+                        // Shared Preference
+                        val pref = getSharedPreferences("login", MODE_PRIVATE)
+                        val editor = pref.edit()
+                        editor.putBoolean("flag", true)
+                        editor.apply()
                         startActivity(Intent(this, HomeActivity::class.java))
                         finish()
                     } else {
@@ -92,6 +104,11 @@ class SignIn : AppCompatActivity() {
         val credential = GoogleAuthProvider.getCredential(account.idToken,null)
         firebaseAuth.signInWithCredential(credential).addOnCompleteListener{
             if (it.isSuccessful){
+                // Shared Preference
+                val pref = getSharedPreferences("login", MODE_PRIVATE)
+                val editor = pref.edit()
+                editor.putBoolean("flag", true)
+                editor.apply()
                 startActivity(Intent(this, HomeActivity::class.java))
                 finish()
             }

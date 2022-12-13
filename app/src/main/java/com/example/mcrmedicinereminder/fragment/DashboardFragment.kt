@@ -1,16 +1,20 @@
 package com.example.mcrmedicinereminder.fragment
 
+import android.app.AlertDialog
+import android.content.DialogInterface
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
+import androidx.databinding.DataBindingUtil
+import com.example.mcrmedicinereminder.MainActivity
 import com.example.mcrmedicinereminder.R
-
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
+import com.example.mcrmedicinereminder.SignIn
+import com.example.mcrmedicinereminder.databinding.FragmentDashboardBinding
+import com.google.firebase.auth.FirebaseAuth
 
 /**
  * A simple [Fragment] subclass.
@@ -18,43 +22,57 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  */
 class DashboardFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    private lateinit var firebaseAuth: FirebaseAuth
+    private lateinit var binding: FragmentDashboardBinding
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_dashboard, container, false)
+        binding =
+            DataBindingUtil.inflate(inflater, R.layout.fragment_dashboard, container, false)
+        return binding.root
+
+
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment DashboardFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            DashboardFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        firebaseAuth = FirebaseAuth.getInstance()
+
+        binding.logout.setOnClickListener {
+            firebaseAuth.signOut()
+                val builder = AlertDialog.Builder(it.context)
+                builder.setTitle("Log out ?")
+                builder.setMessage("Are you sure you want to Logout ?")
+                builder.apply {
+                    setPositiveButton("YES", DialogInterface.OnClickListener { dialog, id ->
+                        // Shared Preference
+                        val pref = builder.context.getSharedPreferences("login", AppCompatActivity.MODE_PRIVATE)
+                        val editor = pref?.edit()
+                        editor?.putBoolean("flag", false)
+                        editor?.apply()
+                        startActivity(Intent(builder.context,SignIn::class.java))
+                        activity?.finish()
+
+                    })
                 }
-            }
+                    .setNegativeButton("No", DialogInterface.OnClickListener { dialogInterface, i ->
+                        dialogInterface.dismiss()
+                    })
+                builder.show()
+        }
+
+        binding.accountTxt.setOnClickListener {
+            val transaction = this.activity?.supportFragmentManager?.beginTransaction()
+            transaction?.setReorderingAllowed(true)
+            transaction?.replace(R.id.fragment_container, AccountFragment())
+            transaction?.addToBackStack("tag")
+            transaction?.commit()
+        }
     }
+
 }
