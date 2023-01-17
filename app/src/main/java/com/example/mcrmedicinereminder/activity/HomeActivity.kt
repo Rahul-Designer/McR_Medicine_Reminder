@@ -1,4 +1,4 @@
-package com.example.mcrmedicinereminder
+package com.example.mcrmedicinereminder.activity
 
 import android.os.Bundle
 import android.view.View
@@ -7,6 +7,7 @@ import android.view.animation.ScaleAnimation
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import com.example.mcrmedicinereminder.R
 import com.example.mcrmedicinereminder.databinding.ActivityHomeBinding
 import com.example.mcrmedicinereminder.fragment.DashboardFragment
 import com.example.mcrmedicinereminder.fragment.DonateFragment
@@ -14,7 +15,7 @@ import com.example.mcrmedicinereminder.fragment.ReminderFragment
 import com.example.mcrmedicinereminder.fragment.TipFragment
 
 class HomeActivity : AppCompatActivity() {
-    lateinit var binding: ActivityHomeBinding
+    private lateinit var binding: ActivityHomeBinding
     private var selectedTab = 1
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

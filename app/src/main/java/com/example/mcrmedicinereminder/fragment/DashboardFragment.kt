@@ -10,9 +10,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
-import com.example.mcrmedicinereminder.MainActivity
-import com.example.mcrmedicinereminder.R
-import com.example.mcrmedicinereminder.SignIn
+import com.example.mcrmedicinereminder.*
+import com.example.mcrmedicinereminder.activity.AccountActivity
+import com.example.mcrmedicinereminder.activity.SignIn
 import com.example.mcrmedicinereminder.databinding.FragmentDashboardBinding
 import com.google.firebase.auth.FirebaseAuth
 
@@ -55,7 +55,7 @@ class DashboardFragment : Fragment() {
                         val editor = pref?.edit()
                         editor?.putBoolean("flag", false)
                         editor?.apply()
-                        startActivity(Intent(builder.context,SignIn::class.java))
+                        startActivity(Intent(builder.context, SignIn::class.java))
                         activity?.finish()
 
                     })
@@ -67,11 +67,8 @@ class DashboardFragment : Fragment() {
         }
 
         binding.accountTxt.setOnClickListener {
-            val transaction = this.activity?.supportFragmentManager?.beginTransaction()
-            transaction?.setReorderingAllowed(true)
-            transaction?.replace(R.id.fragment_container, AccountFragment())
-            transaction?.addToBackStack("tag")
-            transaction?.commit()
+            val intent = Intent(it.context, AccountActivity::class.java)
+            startActivity(intent)
         }
     }
 

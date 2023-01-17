@@ -6,7 +6,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".HomeActivity">
+        tools:context=".activity.HomeActivity">
 
         <FrameLayout
             android:id="@+id/fragment_container"
@@ -20,7 +20,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:background="#fff"
-            android:elevation="10dp"
+            android:elevation="5dp"
             android:gravity="center"
             android:orientation="horizontal"
             android:paddingHorizontal="20dp"

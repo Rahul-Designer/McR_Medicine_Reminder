@@ -1,4 +1,4 @@
-package com.example.mcrmedicinereminder
+package com.example.mcrmedicinereminder.activity
 
 import android.app.Activity
 import android.content.Intent
@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.databinding.DataBindingUtil
+import com.example.mcrmedicinereminder.R
 import com.example.mcrmedicinereminder.databinding.ActivitySignUpBinding
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -25,7 +26,7 @@ class SignUp : AppCompatActivity() {
         firebaseAuth = FirebaseAuth.getInstance()
 
         binding.signIn.setOnClickListener {
-            startActivity(Intent(this,SignIn::class.java))
+            startActivity(Intent(this, SignIn::class.java))
             finish()
         }
 

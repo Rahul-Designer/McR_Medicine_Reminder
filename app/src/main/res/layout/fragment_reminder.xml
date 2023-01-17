@@ -1,21 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <FrameLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/colour4"
+        android:background="@color/colour5"
         tools:context=".fragment.ReminderFragment">
 
-        <!-- TODO: Update blank fragment layout -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/add_medicine_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
             android:gravity="center"
-            android:textSize="18sp"
-            android:textColor="@color/black"
-            android:text="Reminder Fragment" />
+            android:text="Add Medicine"
+            android:layout_marginEnd="15dp"
+            android:layout_marginBottom="15dp"
+            android:paddingHorizontal="10dp"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:background="@drawable/add_medicine_btn" app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
 
-    </FrameLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
