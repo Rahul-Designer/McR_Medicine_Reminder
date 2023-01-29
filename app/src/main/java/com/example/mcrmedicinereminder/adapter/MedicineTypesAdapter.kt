@@ -25,7 +25,7 @@ class MedicineTypesAdapter(
             itemView.setOnClickListener {
 //                it.item_bg.setBackgroundResource(R.drawable.selected_medicine_bg)
                 val medicineName = it.item_txt.text.toString()
-                Log.d("RAHUL", medicineName)
+                Log.d("RAHUL",adapterPosition.toString())
                 onItemClickListener.updateBackground(medicineName,adapterPosition)
             }
         }
@@ -45,7 +45,7 @@ class MedicineTypesAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
-        if (rmPosition == position || rmPosition == last) {
+        if (rmPosition == position) {
             holder.itemView.item_bg.setBackgroundResource(R.drawable.selected_medicine_bg)
         }
         if (last == position ) {
@@ -65,7 +65,7 @@ class MedicineTypesAdapter(
     }
 
     fun changeUI(position: Int) {
-        last = this.rmPosition
+        this.last = this.rmPosition
         this.rmPosition = position
         last?.let { notifyItemChanged(it) }
         notifyItemChanged(position)

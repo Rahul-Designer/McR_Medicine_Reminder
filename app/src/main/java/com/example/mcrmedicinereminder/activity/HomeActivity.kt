@@ -25,6 +25,7 @@ class HomeActivity : AppCompatActivity() {
         replaceFragment(ReminderFragment())
 
         binding.reminderLayout.setOnClickListener {
+
             if (selectedTab != 1) {
 
                 // change fragment
