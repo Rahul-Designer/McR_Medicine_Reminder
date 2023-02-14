@@ -13,14 +13,15 @@
             android:id="@+id/add_medicine_btn"
             android:layout_width="wrap_content"
             android:layout_height="40dp"
-            android:gravity="center"
-            android:text="Add Medicine"
             android:layout_marginEnd="15dp"
             android:layout_marginBottom="15dp"
+            android:background="@drawable/add_medicine_btn"
+            android:gravity="center"
             android:paddingHorizontal="10dp"
+            android:text="Add Medicine"
             android:textColor="@color/white"
             android:textSize="16sp"
-            android:background="@drawable/add_medicine_btn" app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

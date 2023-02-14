@@ -5,6 +5,7 @@ import android.app.Dialog
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
@@ -60,7 +61,6 @@ class MedicineActivity : AppCompatActivity(), MedicineTypesAdapter.OnItemClickLi
 
 
         // Dose Unit Spinner
-//        binding.doseSpinner.onItemSelectedListener = this
         val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, medicineUnit)
         adapter.setDropDownViewResource(android.R.layout.simple_list_item_1)
         binding.doseSpinner.adapter = adapter
@@ -103,10 +103,12 @@ class MedicineActivity : AppCompatActivity(), MedicineTypesAdapter.OnItemClickLi
         }
 
 
+        medicineSchedule = binding.scheduleTxt.text.toString()
         // Schedule Activity
         binding.scheduleBtn.setOnClickListener {
             val intent = Intent(it.context, ScheduleActivity::class.java)
-            startActivity(intent)
+            startActivityForResult(intent, 1)
+
         }
 
 
@@ -127,6 +129,7 @@ class MedicineActivity : AppCompatActivity(), MedicineTypesAdapter.OnItemClickLi
                 ) {
                     medicineInstruction = instructionArray[pos].toString()
                 }
+
                 override fun onNothingSelected(adapterView: AdapterView<*>?) {
                     medicineInstruction = "No Instruction"
                 }
@@ -156,23 +159,128 @@ class MedicineActivity : AppCompatActivity(), MedicineTypesAdapter.OnItemClickLi
                 finish()
             })
         }
-            .setNegativeButton("DISCARD", DialogInterface.OnClickListener { dialogInterface, i ->
-                finish()
-                dialogInterface.dismiss()
-            })
+            .setNegativeButton(
+                "DISCARD",
+                DialogInterface.OnClickListener { dialogInterface, i ->
+                    finish()
+                    dialogInterface.dismiss()
+                })
         builder.show()
     }
 
     private fun getMedicineDetail() {
         if ((binding.medicineName.text.toString()).isEmpty()) {
             binding.medicineName.error = "Medicine Name"
+        } else {
+            this.medicineName = binding.medicineName.text.toString()
+            Toast.makeText(
+                this,
+                "$medicineName\n $medicineType\n $doseUnit\n $stockSize\n $medicineSchedule\n $medicineInstruction",
+                Toast.LENGTH_LONG
+            )
+                .show()
+            finish()
         }
-        else{
-        this.medicineName = binding.medicineName.text.toString()
-        Toast.makeText(this, "$medicineName $medicineType $doseUnit $stockSize $medicineInstruction", Toast.LENGTH_LONG)
-            .show()
-        finish()
-    }
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
+        super.onActivityResult(requestCode, resultCode, intent)
+        if (requestCode == 1) {
+            if (resultCode == RESULT_OK) {
+                if (intent != null) {
+                    binding.scheduleTxt.setTextColor(resources.getColor(R.color.colour1))
+                    binding.scheduleTxt.text = intent.getBundleExtra("Bundle")
+                        ?.getString("schedulemessage", "Not Selected")
+                    var medicineTimeTable: String? = null
+                    when (intent.getBundleExtra("Bundle")
+                        ?.getString("scheduleset", "Not Selected")) {
+                        "One Times" -> {
+                            binding.medicineTimeOne.visibility = View.VISIBLE
+                            binding.timeOne.text =
+                                intent.getBundleExtra("Bundle")?.getString("time1", "07:00 AM")
+                            binding.timeOneTab.text =
+                                intent.getBundleExtra("Bundle")?.getString("tablet1", "1 tab")
+                            binding.medicineTimeTwo.visibility = View.GONE
+                            binding.medicineTimeThree.visibility = View.GONE
+                            binding.medicineTimeFour.visibility = View.GONE
+                            medicineTimeTable =
+                                binding.timeOne.text.toString() + " -> " + binding.timeOneTab.text.toString()
+
+                        }
+                        "Two Times" -> {
+                            binding.medicineTimeOne.visibility = View.VISIBLE
+                            binding.medicineTimeTwo.visibility = View.GONE
+                            binding.timeOne.text =
+                                intent.getBundleExtra("Bundle")?.getString("time1", "07:00 AM")
+                            binding.timeOneTab.text =
+                                intent.getBundleExtra("Bundle")?.getString("tablet1", "1 tab")
+                            binding.timeThree.text =
+                                intent.getBundleExtra("Bundle")?.getString("time3", "01:00 PM")
+                            binding.timeThreeTab.text =
+                                intent.getBundleExtra("Bundle")?.getString("tablet3", "1 tab")
+                            binding.medicineTimeThree.visibility = View.VISIBLE
+                            binding.medicineTimeFour.visibility = View.GONE
+                            medicineTimeTable =
+                                binding.timeOne.text.toString() + " -> " + binding.timeOneTab.text.toString() + "\n" + binding.timeTwo.text.toString() + " -> " + binding.timeTwoTab.text.toString()
+                        }
+                        "Three Times" -> {
+                            binding.medicineTimeOne.visibility = View.VISIBLE
+                            binding.medicineTimeTwo.visibility = View.VISIBLE
+                            binding.medicineTimeThree.visibility = View.VISIBLE
+                            binding.timeOne.text =
+                                intent.getBundleExtra("Bundle")?.getString("time1", "07:00 AM")
+                            binding.timeOneTab.text =
+                                intent.getBundleExtra("Bundle")?.getString("tablet1", "1 tab")
+                            binding.timeTwo.text =
+                                intent.getBundleExtra("Bundle")?.getString("time2", "01:00 PM")
+                            binding.timeTwoTab.text =
+                                intent.getBundleExtra("Bundle")?.getString("tablet2", "1 tab")
+                            binding.timeThree.text =
+                                intent.getBundleExtra("Bundle")?.getString("time3", "07:00 PM")
+                            binding.timeThreeTab.text =
+                                intent.getBundleExtra("Bundle")?.getString("tablet3", "1 tab")
+                            binding.medicineTimeFour.visibility = View.GONE
+                            medicineTimeTable =
+                                binding.timeOne.text.toString() + " -> " + binding.timeOneTab.text.toString() + "\n" + binding.timeTwo.text.toString() + " -> " + binding.timeTwoTab.text.toString() + "\n" + binding.timeThree.text.toString() + " -> " + binding.timeThreeTab.text.toString()
+                        }
+                        "Four Times" -> {
+                            binding.medicineTimeOne.visibility = View.VISIBLE
+                            binding.medicineTimeTwo.visibility = View.VISIBLE
+                            binding.medicineTimeThree.visibility = View.VISIBLE
+                            binding.medicineTimeFour.visibility = View.VISIBLE
+                            binding.timeOne.text =
+                                intent.getBundleExtra("Bundle")?.getString("time1", "07:00 AM")
+                            binding.timeOneTab.text =
+                                intent.getBundleExtra("Bundle")?.getString("tablet1", "1 tab")
+                            binding.timeTwo.text =
+                                intent.getBundleExtra("Bundle")?.getString("time2", "01:00 PM")
+                            binding.timeTwoTab.text =
+                                intent.getBundleExtra("Bundle")?.getString("tablet2", "1 tab")
+                            binding.timeThree.text =
+                                intent.getBundleExtra("Bundle")?.getString("time3", "07:00 PM")
+                            binding.timeThreeTab.text =
+                                intent.getBundleExtra("Bundle")?.getString("tablet3", "1 tab")
+                            binding.timeFour.text =
+                                intent.getBundleExtra("Bundle")?.getString("time4", "10:00 PM")
+                            binding.timeFourTab.text =
+                                intent.getBundleExtra("Bundle")?.getString("tablet4", "1 tab")
+                            medicineTimeTable =
+                                binding.timeOne.text.toString() + " -> " + binding.timeOneTab.text.toString() + "\n" + binding.timeTwo.text.toString() + " -> " + binding.timeTwoTab.text.toString() + "\n" + binding.timeThree.text.toString() + " -> " + binding.timeThreeTab.text.toString() + "\n" + binding.timeFour.text.toString() + " -> " + binding.timeFourTab.text.toString()
+                        }
+                    }
+                    binding.scheduleTimingStart.visibility = View.VISIBLE
+                    binding.starttime.visibility = View.VISIBLE
+                    binding.starttime.text = intent.getBundleExtra("Bundle")
+                        ?.getString("durationstart", "No Specific Date")
+                    binding.scheduleTimingEnd.visibility = View.VISIBLE
+                    binding.endtime.visibility = View.VISIBLE
+                    binding.endtime.text = intent.getBundleExtra("Bundle")
+                        ?.getString("durationend", "No Specific Date")
+
+                    medicineSchedule =
+                        binding.scheduleTxt.text.toString() + "\n" + medicineTimeTable + "\n" + binding.starttime.text + "\n" +  binding.endtime.text
+                }
+            }
+        }
+    }
 }
