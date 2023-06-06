@@ -1,27 +1,38 @@
 package com.example.mcrmedicinereminder.activity
 
+import android.app.AlarmManager
 import android.app.AlertDialog
 import android.app.Dialog
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
+import android.icu.util.Calendar
+import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.*
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.mcrmedicinereminder.Constants
-import com.example.mcrmedicinereminder.R
+import com.example.mcrmedicinereminder.*
 import com.example.mcrmedicinereminder.adapter.MedicineTypesAdapter
 import com.example.mcrmedicinereminder.databinding.ActivityMedicineBinding
+import com.example.mcrmedicinereminder.model.ReminderViewModel
+import com.example.mcrmedicinereminder.model.ReminderViewModelFactory
+import com.example.mcrmedicinereminder.repository.MedicineRepository
+import com.example.mcrmedicinereminder.data.MedicineReminder
+import com.example.mcrmedicinereminder.data.MedicineReminderDatabase
 
 
 class MedicineActivity : AppCompatActivity(), MedicineTypesAdapter.OnItemClickListener {
     private lateinit var binding: ActivityMedicineBinding
     private val medicineUnit: Array<String> =
-        arrayOf<String>("tabs", "syrup", "times", "mL(CC)", "drops", "balls", "other")
-
+        arrayOf("tab", "syrup", "time", "mL(CC)", "drop", "ball", "other")
     private val instructionArray: Array<String> = arrayOf(
         "No Instructions",
         "Take before meal",
@@ -34,24 +45,34 @@ class MedicineActivity : AppCompatActivity(), MedicineTypesAdapter.OnItemClickLi
         "Eat more vegetables",
         "Eat more iron-rich foods"
     )
-    private lateinit var unit: String
-    private lateinit var adapter: MedicineTypesAdapter
     private lateinit var medicineName: String
-    private var medicineType: String = "Tablet"
-    private var stockSize: String = "12 tabs"
+    private var medicineImage: Int = 1
+    private lateinit var adapter: MedicineTypesAdapter
     private lateinit var doseUnit: String
+    private var stockSize: Int = 12
+    private lateinit var medicinefeq: String
     private lateinit var medicineSchedule: String
     private lateinit var medicineInstruction: String
+    lateinit var reminderViewModel: ReminderViewModel
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_medicine)
+
+
+        val dao = MedicineReminderDatabase.getDatabase(this).medicineReminderDao()
+        val repository = MedicineRepository(dao)
+
+        reminderViewModel =
+            ViewModelProvider(this, ReminderViewModelFactory(repository)).get(ReminderViewModel::class.java)
 
         // Back Button
         binding.backBtn.setOnClickListener {
             onBackPressed()
         }
 
+        createNotificationChannel()
 
         // Medicine Type Recyclerview
         binding.medicineImgsRecyclerview.layoutManager =
@@ -74,31 +95,31 @@ class MedicineActivity : AppCompatActivity(), MedicineTypesAdapter.OnItemClickLi
                     pos: Int,
                     id: Long
                 ) {
-                    unit = medicineUnit[pos]
                     doseUnit = medicineUnit[pos]
-                    binding.stockQtyTxt.text = "12 " + medicineUnit[pos]
+                    binding.stockQtyTxt.text = "12 $doseUnit"
                 }
 
                 override fun onNothingSelected(adapterView: AdapterView<*>?) {
-                    doseUnit = "tabs"
+//                    doseUnit = "tab"
                 }
             }
 
         // Current Stock
+
         binding.stockQtyTxt.setOnClickListener {
             val dialog = Dialog(it.context)
-//            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
             dialog.setContentView(R.layout.stock_unit)
             val stockQty = dialog.findViewById(R.id.stock_qty_edt) as EditText
             val stockUnit = dialog.findViewById(R.id.stock_unit) as TextView
             val adjust = dialog.findViewById(R.id.set_Qty) as Button
+            stockUnit.text = doseUnit
             adjust.setOnClickListener {
-                val qty = stockQty.text.toString()
-                binding.stockQtyTxt.text = qty + " " + unit
-                this.stockSize = qty + " " + unit
+                val qty = stockQty.text.toString().toInt()
+                binding.stockQtyTxt.text = "$qty $doseUnit"
+                stockSize = qty
                 dialog.dismiss()
             }
-            stockUnit.text = unit
+
             dialog.show()
         }
 
@@ -106,7 +127,10 @@ class MedicineActivity : AppCompatActivity(), MedicineTypesAdapter.OnItemClickLi
         medicineSchedule = binding.scheduleTxt.text.toString()
         // Schedule Activity
         binding.scheduleBtn.setOnClickListener {
+            val bundle = Bundle()
+            bundle.putString("unit", doseUnit)
             val intent = Intent(it.context, ScheduleActivity::class.java)
+            intent.putExtras(bundle)
             startActivityForResult(intent, 1)
 
         }
@@ -143,9 +167,9 @@ class MedicineActivity : AppCompatActivity(), MedicineTypesAdapter.OnItemClickLi
     }
 
 
-    override fun updateBackground(name: String, position: Int) {
-        this.medicineType = name
-        binding.medicineType.text = name
+    override fun updateBackground(position: Int) {
+        medicineImage = position
+        binding.medicineType.text = Constants.getMedicineType()[position].name
         adapter.changeUI(position)
     }
 
@@ -156,7 +180,7 @@ class MedicineActivity : AppCompatActivity(), MedicineTypesAdapter.OnItemClickLi
         builder.setMessage("Change were made in the medication.")
         builder.apply {
             setPositiveButton("SAVE", DialogInterface.OnClickListener { dialog, id ->
-                finish()
+                getMedicineDetail()
             })
         }
             .setNegativeButton(
@@ -171,19 +195,97 @@ class MedicineActivity : AppCompatActivity(), MedicineTypesAdapter.OnItemClickLi
     private fun getMedicineDetail() {
         if ((binding.medicineName.text.toString()).isEmpty()) {
             binding.medicineName.error = "Medicine Name"
-        } else {
+        }
+        if (binding.scheduleTxt.text.toString() == "Not Selected"){
+            binding.scheduleTxt.error = "Set Schedule"
+        }
+        else {
             this.medicineName = binding.medicineName.text.toString()
-            Toast.makeText(
-                this,
-                "$medicineName\n $medicineType\n $doseUnit\n $stockSize\n $medicineSchedule\n $medicineInstruction",
-                Toast.LENGTH_LONG
-            )
-                .show()
+
+            when (medicinefeq) {
+                "One Times" -> {
+                    // only one time
+                    reminderViewModel.insertReminder(MedicineReminder(null,medicineName,medicineImage,Constants.getMedicineType()[medicineImage].name,binding.timeOneTab.text.toString(),stockSize,binding.timeOne.text.toString(),medicineInstruction,false))
+
+                    scheduleNotification(medicineName)
+//                    Toast.makeText(
+//                        this,
+//                        "$medicineName\n ${Constants.getMedicineType()[medicineImage].name}\n1\n$stockSize\n$medicineInstruction",
+//                        Toast.LENGTH_LONG
+//                    )
+//                        .show()
+                }
+                "Two Times" -> {
+
+                    // first time
+                    reminderViewModel.insertReminder(MedicineReminder(null,medicineName,medicineImage,Constants.getMedicineType()[medicineImage].name,binding.timeOneTab.text.toString(),stockSize,binding.timeOne.text.toString(),medicineInstruction,false))
+
+                    // second time
+                    reminderViewModel.insertReminder(MedicineReminder(null,medicineName,medicineImage,Constants.getMedicineType()[medicineImage].name,binding.timeThreeTab.text.toString(),stockSize,binding.timeThree.text.toString(),medicineInstruction,false))
+
+//                    Toast.makeText(
+//                        this,
+//                        "$medicineName\n ${Constants.getMedicineType()[medicineImage].name}\n2\n$doseUnit\n $stockSize\n$medicineInstruction",
+//                        Toast.LENGTH_LONG
+//                    )
+//                        .show()
+                }
+                "Three Times" -> {
+                    // first time
+                    reminderViewModel.insertReminder(MedicineReminder(null,medicineName,medicineImage,Constants.getMedicineType()[medicineImage].name,binding.timeOneTab.text.toString(),stockSize,binding.timeOne.text.toString(),medicineInstruction,false))
+
+                    // second time
+                    reminderViewModel.insertReminder(MedicineReminder(null,medicineName,medicineImage,Constants.getMedicineType()[medicineImage].name,binding.timeTwoTab.text.toString(),stockSize,binding.timeTwo.text.toString(),medicineInstruction,false))
+
+                    // third time
+                    reminderViewModel.insertReminder(MedicineReminder(null,medicineName,medicineImage,Constants.getMedicineType()[medicineImage].name,binding.timeThreeTab.text.toString(),stockSize,binding.timeThree.text.toString(),medicineInstruction,false))
+
+//                    Toast.makeText(
+//                        this,
+//                        "$medicineName\n ${Constants.getMedicineType()[medicineImage].name}\n3\n$stockSize\n$medicineInstruction",
+//                        Toast.LENGTH_LONG
+//                    )
+//                        .show()
+                }
+                "Four Times" -> {
+                    // first time
+                    reminderViewModel.insertReminder(MedicineReminder(null,medicineName,medicineImage,Constants.getMedicineType()[medicineImage].name,binding.timeOneTab.text.toString(),stockSize,binding.timeOne.text.toString(),medicineInstruction,false))
+
+                    // second time
+                    reminderViewModel.insertReminder(MedicineReminder(null,medicineName,medicineImage,Constants.getMedicineType()[medicineImage].name,binding.timeTwoTab.text.toString(),stockSize,binding.timeTwo.text.toString(),medicineInstruction,false))
+
+                    // third time
+                    reminderViewModel.insertReminder(MedicineReminder(null,medicineName,medicineImage,Constants.getMedicineType()[medicineImage].name,binding.timeThreeTab.text.toString(),stockSize,binding.timeThree.text.toString(),medicineInstruction,false))
+
+                    // fourth time
+                    reminderViewModel.insertReminder(MedicineReminder(null,medicineName,medicineImage,Constants.getMedicineType()[medicineImage].name,binding.timeFourTab.text.toString(),stockSize,binding.timeFour.text.toString(),medicineInstruction,false))
+////                    Toast.makeText(
+////                        this,
+////                        "$medicineName\n ${Constants.getMedicineType()[medicineImage].name}\n4\n$stockSize\n 4\n$medicineInstruction",
+////                        Toast.LENGTH_LONG
+////                    )
+////                        .show()
+                }
+            }
+
+//            Toast.makeText(
+//                this,
+//                "$medicineName\n ${Constants.getMedicineType()[medicineImage].image}\n ${Constants.getMedicineType()[medicineImage].name}\n "+binding.timeOne.text+"\n $stockSize\n ${binding.timeOneTab.text}\n $medicineInstruction",
+//                Toast.LENGTH_LONG
+//            ).show()
+//            Log.d("RAHUL","$medicineName\n" +
+//                    " ${Constants.getMedicineType()[medicineImage].image}\n" +
+//                    " ${Constants.getMedicineType()[medicineImage].name}\n" +
+//                    " ${binding.timeOne.text}\n" +
+//                    " $stockSize\n" +
+//                    " ${binding.timeOneTab.text}\n" +
+//                    " $medicineInstruction")
+//            Toast.makeText(this,Constants.getMedicineType().get(medicineImage).name,Toast.LENGTH_LONG).show()
             finish()
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?)  {
         super.onActivityResult(requestCode, resultCode, intent)
         if (requestCode == 1) {
             if (resultCode == RESULT_OK) {
@@ -192,6 +294,9 @@ class MedicineActivity : AppCompatActivity(), MedicineTypesAdapter.OnItemClickLi
                     binding.scheduleTxt.text = intent.getBundleExtra("Bundle")
                         ?.getString("schedulemessage", "Not Selected")
                     var medicineTimeTable: String? = null
+                    medicinefeq =
+                        intent.getBundleExtra("Bundle")?.getString("scheduleset", "Not Selected")
+                            .toString()
                     when (intent.getBundleExtra("Bundle")
                         ?.getString("scheduleset", "Not Selected")) {
                         "One Times" -> {
@@ -276,11 +381,43 @@ class MedicineActivity : AppCompatActivity(), MedicineTypesAdapter.OnItemClickLi
                     binding.endtime.visibility = View.VISIBLE
                     binding.endtime.text = intent.getBundleExtra("Bundle")
                         ?.getString("durationend", "No Specific Date")
-
                     medicineSchedule =
-                        binding.scheduleTxt.text.toString() + "\n" + medicineTimeTable + "\n" + binding.starttime.text + "\n" +  binding.endtime.text
+                        binding.scheduleTxt.text.toString() + "\n" + medicineTimeTable + "\n" + binding.starttime.text + "\n" + binding.endtime.text
                 }
             }
         }
     }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun createNotificationChannel(){
+        val name = "Notif Channel"
+        val desc = "A Description of the Channel"
+        val importance = NotificationManager.IMPORTANCE_DEFAULT
+        val channel = NotificationChannel(ChannelID,name,importance)
+        channel.description = desc
+        val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.createNotificationChannel(channel)
+
+    }
+    private fun scheduleNotification(title : String){
+        val intent = Intent(applicationContext,AlarmReceiver::class.java)
+        val title = title
+        val message = "Please Take Medicine"
+        intent.putExtra("titleExtra",title)
+        intent.putExtra("messageExtra",message)
+        val pendingIntent = PendingIntent.getBroadcast(applicationContext, NotificationId,intent,PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
+
+        val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val time = getTime()
+        alarmManager.setExactAndAllowWhileIdle(
+            AlarmManager.RTC_WAKEUP,time,pendingIntent
+        )
+    }
+
+    private fun getTime() : Long{
+        val calendar = Calendar.getInstance()
+        calendar.set(2023,5,18,13,39,0)
+        return calendar.timeInMillis
+    }
+
 }

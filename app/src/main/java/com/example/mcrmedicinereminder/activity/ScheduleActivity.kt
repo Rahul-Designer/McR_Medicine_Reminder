@@ -36,15 +36,6 @@ class ScheduleActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener
     private val medicineCalendar = Calendar.getInstance()
     private val tabletFrequencyFormatter = SimpleDateFormat("hh:mm a", Locale.US)
 
-    private var mondayCheck by Delegates.notNull<Boolean>()
-    private var tuesdayCheck by Delegates.notNull<Boolean>()
-    private var wednesdayCheck by Delegates.notNull<Boolean>()
-    private var thursdayCheck by Delegates.notNull<Boolean>()
-    private var fridayCheck by Delegates.notNull<Boolean>()
-    private var saturdayCheck by Delegates.notNull<Boolean>()
-    private var sundayCheck by Delegates.notNull<Boolean>()
-
-
     // Schedule Message variables
     private lateinit var noOfDaysSM: String
 
@@ -57,6 +48,12 @@ class ScheduleActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener
             onBackPressed()
         }
 
+        val bundle = intent.extras
+        val value = bundle?.getString("unit")
+        binding.timeOneTab.text = "1 $value"
+        binding.timeTwoTab.text = "1 $value"
+        binding.timeThreeTab.text = "1 $value"
+        binding.timeFourTab.text = "1 $value"
         // Save Schedule
         binding.saveBtn.setOnClickListener {
 //            super.onBackPressed()
@@ -244,7 +241,6 @@ class ScheduleActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener
                         }
                         binding.timeOne.text =
                             tabletFrequencyFormatter.format(medicineCalendar.timeInMillis)
-
                     }
 
                 },

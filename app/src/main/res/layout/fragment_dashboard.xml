@@ -6,7 +6,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/colour5">
+        android:background="#F7FFF8">
 
         <TextView
             android:id="@+id/textView"
@@ -17,14 +17,14 @@
             android:fontFamily="@font/be_vietnam_bold"
             android:text="Dashboard"
             android:textColor="@color/colour1"
-            android:textSize="25sp"
+            android:textSize="22sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cardView"
-            android:layout_width="100dp"
+            android:layout_width="96dp"
             android:layout_height="100dp"
             android:layout_marginTop="10dp"
             app:cardCornerRadius="50dp"
@@ -36,13 +36,11 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@color/colour1"
                 android:orientation="vertical">
 
                 <ImageView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_margin="2dp"
                     android:src="@drawable/user_default_img" />
             </LinearLayout>
 
@@ -50,174 +48,73 @@
         </androidx.cardview.widget.CardView>
 
         <TextView
-            android:id="@+id/textView2"
-            android:layout_width="match_parent"
+            android:id="@+id/user_name_txt"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
             android:layout_marginTop="10dp"
-            android:fontFamily="@font/cherry_cream_soda"
-            android:text="Hello Rahul"
-            android:textColor="@color/colour2"
-            android:textSize="20sp"
+            android:text="Hello, Rahul !"
+            android:textColor="@color/black"
+            android:textSize="28sp"
+            android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/cardView" />
+            app:layout_constraintTop_toBottomOf="@+id/textView" />
 
-        <TextView
-            android:id="@+id/textView3"
+        <ImageView
+            android:id="@+id/account_txt"
+            android:layout_width="match_parent"
+            android:layout_height="137dp"
+            android:layout_marginHorizontal="30dp"
+            android:layout_marginTop="2dp"
+            android:src="@drawable/dashboard_option_img"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/user_name_txt" />
+
+        <LinearLayout
+            android:id="@+id/linearLayout5"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:fontFamily="@font/cherry_cream_soda"
-            android:text="Here your medicine status"
-            android:textColor="@color/colour2"
-            android:textSize="20sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView2" />
-
-        <androidx.cardview.widget.CardView
-            android:id="@+id/cardView2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="10dp"
-            app:cardCornerRadius="15dp"
+            android:layout_marginHorizontal="32dp"
             android:layout_marginTop="10dp"
-            app:cardElevation="5dp"
-            app:cardUseCompatPadding="true"
-            app:layout_constraintTop_toBottomOf="@+id/textView3"
-            tools:layout_editor_absoluteX="10dp">
+            android:gravity="center_horizontal"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/account_txt">
 
-            <LinearLayout
+            <ImageView
+                android:id="@+id/restore_medicine"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginBottom="20dp"
-                android:orientation="vertical">
+                android:layout_height="280dp"
+                android:layout_weight="1"
+                android:scaleType="fitXY"
+                android:src="@drawable/restore_medicine_img_bg" />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+            <ImageView
+                android:id="@+id/share_medicine"
+                android:layout_width="match_parent"
+                android:layout_height="280dp"
+                android:layout_weight="1"
+                android:scaleType="fitXY"
+                android:src="@drawable/share_medicine_img_bg" />
 
-                    <TextView
-                        android:id="@+id/remaining_txt"
-                        android:layout_width="50dp"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_marginStart="15dp"
-                        android:gravity="center"
-                        android:layout_weight="2"
-                        android:text="Remaining stock of medicine"
-                        android:textColor="@color/colour2"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
 
-                    <ImageView
-                        android:id="@+id/pie_chart"
-                        android:layout_width="50dp"
-                        android:layout_height="100dp"
-                        android:layout_marginHorizontal="20dp"
-                        android:layout_marginTop="20dp"
-                        android:layout_weight="1"
-                        android:scaleType="fitXY"
-                        android:src="@drawable/pie_chart" />
-                </LinearLayout>
+        </LinearLayout>
 
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/medicine_detail_btn"
-                    android:layout_width="140dp"
-                    android:layout_height="40dp"
-                    android:layout_gravity="center"
-                    android:layout_marginTop="30dp"
-                    android:background="@drawable/sign_in_btn_bg"
-                    android:text="View in Detail"
-                    android:textColor="@color/white" />
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
-
-        <androidx.cardview.widget.CardView
+        <ImageView
+            android:id="@+id/logout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="10dp"
-            app:cardCornerRadius="15dp"
-            app:cardElevation="5dp"
-            app:cardUseCompatPadding="true"
-            app:layout_constraintTop_toBottomOf="@+id/cardView2">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/account_txt"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="15dp"
-                    android:layout_marginTop="15dp"
-                    android:layout_marginBottom="10dp"
-                    android:drawableEnd="@drawable/forward_arrow"
-                    android:text="Account"
-                    android:textColor="@color/colour1"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="2dp"
-                    android:background="@color/colour5"
-                    android:visibility="gone" />
-
-                <TextView
-                    android:id="@+id/about_txt"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="15dp"
-                    android:layout_marginTop="15dp"
-                    android:layout_marginBottom="10dp"
-                    android:drawableEnd="@drawable/forward_arrow"
-                    android:text="About"
-                    android:textColor="@color/colour1"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="2dp"
-                    android:background="@color/colour5"
-                    android:visibility="gone" />
-
-                <TextView
-                    android:id="@+id/terms_txt"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="15dp"
-                    android:layout_marginTop="15dp"
-                    android:layout_marginBottom="10dp"
-                    android:drawableEnd="@drawable/forward_arrow"
-                    android:text="Term &amp; Conditon"
-                    android:textColor="@color/colour1"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="2dp"
-                    android:background="@color/colour5"
-                    android:visibility="gone" />
-
-                <TextView
-                    android:id="@+id/logout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="15dp"
-                    android:layout_marginTop="15dp"
-                    android:layout_marginBottom="15dp"
-                    android:drawableEnd="@drawable/forward_arrow"
-                    android:text="Logout"
-                    android:textColor="@color/colour1"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
-
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
+            android:layout_height="140dp"
+            android:layout_marginHorizontal="30dp"
+            android:layout_marginTop="10dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/logout_img_bg"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout5" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

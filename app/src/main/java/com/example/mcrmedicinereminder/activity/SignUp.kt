@@ -15,8 +15,10 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.database.FirebaseDatabase
 
 class SignUp : AppCompatActivity() {
+    private lateinit var database: FirebaseDatabase
     private lateinit var firebaseAuth: FirebaseAuth
     lateinit var binding: ActivitySignUpBinding
     private lateinit var googleSignInClient: GoogleSignInClient
@@ -24,6 +26,7 @@ class SignUp : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_sign_up)
         firebaseAuth = FirebaseAuth.getInstance()
+        database = FirebaseDatabase.getInstance()
 
         binding.signIn.setOnClickListener {
             startActivity(Intent(this, SignIn::class.java))
@@ -36,7 +39,7 @@ class SignUp : AppCompatActivity() {
             val email = binding.emailEdt.text.toString()
             val password = binding.passwordEdt.text.toString()
             val confirmPassword = binding.confirmPasswordEdt.text.toString()
-            if (email.isEmpty()) binding.emailEdt.error = "Please enter name"
+            if (name.isEmpty()) binding.emailEdt.error = "Please enter name"
             if (email.isEmpty()) binding.emailEdt.error = "Please enter email"
             if (password.isEmpty()) binding.passwordEdt.error = "Please enter password"
             if (password != confirmPassword) binding.passwordEdt.error = "Please enter same password"
@@ -49,6 +52,7 @@ class SignUp : AppCompatActivity() {
                                 val editor = pref.edit()
                                 editor.putBoolean("flag", true)
                                 editor.apply()
+                                upoladUserInformation()
                                 startActivity(Intent(this, HomeActivity::class.java))
                                 finish()
                             } else {
@@ -65,6 +69,10 @@ class SignUp : AppCompatActivity() {
         binding.googleSignUpBtn.setOnClickListener {
             signInGoogle()
         }
+    }
+
+    private fun upoladUserInformation() {
+        TODO("Not yet implemented")
     }
 
     // Google SignUp Code
@@ -96,6 +104,11 @@ class SignUp : AppCompatActivity() {
         val credential = GoogleAuthProvider.getCredential(account.idToken,null)
         firebaseAuth.signInWithCredential(credential).addOnCompleteListener{
             if (it.isSuccessful){
+                // Shared Preference
+                val pref = getSharedPreferences("login", MODE_PRIVATE)
+                val editor = pref.edit()
+                editor.putBoolean("flag", true)
+                editor.apply()
                 startActivity(Intent(this, HomeActivity::class.java))
                 finish()
             }

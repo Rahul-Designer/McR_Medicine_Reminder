@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.databinding.DataBindingUtil
@@ -21,7 +22,6 @@ import kotlin.properties.Delegates
 class SignIn : AppCompatActivity() {
     private lateinit var firebaseAuth: FirebaseAuth
     lateinit var binding: ActivitySignInBinding
-    var passwordVisible by Delegates.notNull<Boolean>()
     private lateinit var googleSignInClient: GoogleSignInClient
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,6 +46,7 @@ class SignIn : AppCompatActivity() {
                         val editor = pref.edit()
                         editor.putBoolean("flag", true)
                         editor.apply()
+
                         startActivity(Intent(this, HomeActivity::class.java))
                         finish()
                     } else {

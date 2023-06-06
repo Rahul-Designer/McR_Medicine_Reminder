@@ -22,7 +22,7 @@
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cardView"
-            android:layout_width="150dp"
+            android:layout_width="143dp"
             android:layout_height="150dp"
             app:cardCornerRadius="60dp"
             app:cardElevation="2dp"
@@ -32,16 +32,15 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@color/colour1"
                 android:orientation="vertical">
 
                 <ImageView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_margin="2dp"
                     android:src="@drawable/user_default_img" />
             </LinearLayout>
 

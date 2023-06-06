@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.example.mcrmedicinereminder.*
 import com.example.mcrmedicinereminder.activity.AccountActivity
+import com.example.mcrmedicinereminder.activity.RestockMedicineActivity
 import com.example.mcrmedicinereminder.activity.SignIn
 import com.example.mcrmedicinereminder.databinding.FragmentDashboardBinding
 import com.google.firebase.auth.FirebaseAuth
@@ -34,6 +35,7 @@ class DashboardFragment : Fragment() {
         binding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_dashboard, container, false)
         return binding.root
+
 
 
     }
@@ -69,6 +71,10 @@ class DashboardFragment : Fragment() {
         binding.accountTxt.setOnClickListener {
             val intent = Intent(it.context, AccountActivity::class.java)
             startActivity(intent)
+        }
+
+        binding.restoreMedicine.setOnClickListener {
+            startActivity(Intent(it.context,RestockMedicineActivity::class.java))
         }
     }
 

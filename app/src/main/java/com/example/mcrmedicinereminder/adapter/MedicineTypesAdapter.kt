@@ -26,7 +26,7 @@ class MedicineTypesAdapter(
 //                it.item_bg.setBackgroundResource(R.drawable.selected_medicine_bg)
                 val medicineName = it.item_txt.text.toString()
                 Log.d("RAHUL",adapterPosition.toString())
-                onItemClickListener.updateBackground(medicineName,adapterPosition)
+                onItemClickListener.updateBackground(adapterPosition)
             }
         }
 
@@ -61,7 +61,7 @@ class MedicineTypesAdapter(
     }
 
     interface OnItemClickListener {
-        fun updateBackground(name : String ,position: Int)
+        fun updateBackground(position: Int)
     }
 
     fun changeUI(position: Int) {
