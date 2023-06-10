@@ -39,6 +39,7 @@
                 android:orientation="vertical">
 
                 <ImageView
+                    android:id="@+id/profile_img"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:src="@drawable/user_default_img" />
@@ -47,11 +48,11 @@
         </androidx.cardview.widget.CardView>
 
         <TextView
-            android:id="@+id/textView4"
+            android:id="@+id/user_name_txt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="-10dp"
-            android:text="Rahul Singh"
+            android:text="Rahul "
             android:textColor="@color/colour1"
             android:textSize="25sp"
             android:textStyle="bold"
@@ -61,17 +62,17 @@
             app:layout_constraintTop_toBottomOf="@+id/cardView" />
 
         <TextView
-            android:id="@+id/textView5"
+            android:id="@+id/user_email_txt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="-2dp"
-            android:text="singh@gmail.com"
+            android:text="singh123@gmail.com"
             android:textColor="@color/colour2"
             android:textSize="18sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView4" />
+            app:layout_constraintTop_toBottomOf="@+id/user_name_txt" />
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cardView3"
@@ -82,7 +83,7 @@
             app:cardCornerRadius="15dp"
             app:cardElevation="5dp"
             app:cardUseCompatPadding="true"
-            app:layout_constraintTop_toBottomOf="@+id/textView5"
+            app:layout_constraintTop_toBottomOf="@+id/user_email_txt"
             tools:layout_editor_absoluteX="10dp">
 
             <LinearLayout
@@ -108,7 +109,7 @@
                     android:layout_marginHorizontal="10dp"
                     android:background="@null"
                     android:ems="20"
-                    android:text="Rahul Singh"
+                    android:text="Rahul"
                     android:textColor="@color/colour1"
                     android:textSize="16sp" />
 
@@ -135,7 +136,7 @@
                     android:layout_marginHorizontal="10dp"
                     android:background="@null"
                     android:ems="20"
-                    android:text="singh@gmail.com"
+                    android:text="singh123@gmail.com"
                     android:textColor="@color/colour1"
                     android:textSize="16sp" />
 
@@ -162,7 +163,8 @@
                     android:layout_marginHorizontal="10dp"
                     android:background="@null"
                     android:ems="20"
-                    android:text="9660338900"
+                    android:text=""
+                    android:inputType="number"
                     android:textColor="@color/colour1"
                     android:textSize="16sp" />
 
@@ -187,10 +189,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="10dp"
-                    android:layout_marginBottom="20dp"
+                    android:layout_marginBottom="10dp"
                     android:background="@null"
                     android:ems="50"
-                    android:text="Subhash Nagar Ajmer"
+                    android:inputType="textLongMessage"
+                    android:text=""
                     android:textColor="@color/colour1"
                     android:textSize="16sp" />
 

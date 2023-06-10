@@ -23,11 +23,11 @@ interface MedicineReminderDao {
     fun updateMedicineCheck(medicineReminder: MedicineReminder)
 
     // Get Medicine Details
-    @Query("SELECT SUM(Medicine_STOCK) FROM (SELECT DISTINCT Medicine_NAME,Medicine_STOCK FROM medicine_reminder_details )")
+    @Query("SELECT SUM(Medicine_STOCK) FROM (SELECT DISTINCT Medicine_NAME ,Medicine_STOCK FROM medicine_reminder_details WHERE Medicine_TYPE = \"Tablet\")")
     fun getDonateMedicine() : LiveData<Int>
 
     // Get Stock Medicine Details
-    @Query("SELECT DISTINCT Medicine_NAME ,Medicine_STOCK FROM medicine_reminder_details")
+    @Query("SELECT DISTINCT Medicine_NAME ,Medicine_STOCK FROM medicine_reminder_details WHERE Medicine_TYPE = \"Tablet\" ")
     fun getStockMedicine() : LiveData<List<RestockMedicine>>
 
 
