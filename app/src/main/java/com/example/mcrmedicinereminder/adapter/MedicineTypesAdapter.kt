@@ -6,10 +6,12 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mcrmedicinereminder.R
 import com.example.mcrmedicinereminder.model.MedicineTypes
-import kotlinx.android.synthetic.main.medicine_types.view.*
 
 class MedicineTypesAdapter(
     private val context: Context,
@@ -21,18 +23,25 @@ class MedicineTypesAdapter(
 
     class ViewHolder(itemView: View, onItemClickListener: OnItemClickListener) :
         RecyclerView.ViewHolder(itemView) {
+        var item_txt: TextView
+        var item_image: ImageView
+        var item_bg: LinearLayout
+
         init {
+            item_txt = itemView.findViewById(R.id.item_txt)
+            item_image = itemView.findViewById(R.id.item_image)
+            item_bg = itemView.findViewById(R.id.item_bg)
             itemView.setOnClickListener {
 //                it.item_bg.setBackgroundResource(R.drawable.selected_medicine_bg)
-                val medicineName = it.item_txt.text.toString()
+                val medicineName = item_txt.text.toString()
                 Log.d("RAHUL",adapterPosition.toString())
                 onItemClickListener.updateBackground(adapterPosition)
             }
         }
 
         fun bind(info: MedicineTypes) {
-            itemView.item_txt.text = info.name
-            itemView.item_image.setImageResource(info.image)
+            item_txt.text = info.name
+            item_image.setImageResource(info.image)
         }
     }
 
@@ -46,10 +55,10 @@ class MedicineTypesAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
         if (rmPosition == position) {
-            holder.itemView.item_bg.setBackgroundResource(R.drawable.selected_medicine_bg)
+            holder.item_bg.setBackgroundResource(R.drawable.selected_medicine_bg)
         }
         if (last == position ) {
-            holder.itemView.item_bg.setBackgroundColor(Color.WHITE)
+            holder.item_bg.setBackgroundColor(Color.WHITE)
         }
 
         val pos = arrMedicineTypes[position]

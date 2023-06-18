@@ -30,8 +30,6 @@ import com.example.mcrmedicinereminder.model.ReminderViewModelFactory
 import com.example.mcrmedicinereminder.repository.MedicineRepository
 import com.example.mcrmedicinereminder.data.MedicineReminder
 import com.example.mcrmedicinereminder.data.MedicineReminderDatabase
-import kotlinx.android.synthetic.main.activity_medicine.time_one
-import kotlinx.android.synthetic.main.medicine_reminder_recyclerview_item.time
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale

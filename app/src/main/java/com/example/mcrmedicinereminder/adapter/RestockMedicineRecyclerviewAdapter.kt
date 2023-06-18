@@ -2,7 +2,6 @@ package com.example.mcrmedicinereminder.adapter
 
 import android.app.Dialog
 import android.content.Context
-import android.icu.number.IntegerWidth
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,7 +11,6 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mcrmedicinereminder.R
 import com.example.mcrmedicinereminder.model.RestockMedicine
-import kotlinx.android.synthetic.main.restock_medicine_recyclerview_item.view.*
 
 class RestockMedicineRecyclerviewAdapter(
     private val context: Context,
@@ -24,9 +22,16 @@ class RestockMedicineRecyclerviewAdapter(
 
     class ViewHolder(itemView: View, private val onStockItemClick: OnStockItemClick) :
         RecyclerView.ViewHolder(itemView) {
+        var medicine_name: TextView
+        var medicine_stock: TextView
+
+        init {
+            medicine_name = itemView.findViewById(R.id.medicine_name)
+            medicine_stock = itemView.findViewById(R.id.medicine_stock)
+        }
         fun bind(info: RestockMedicine) {
-            itemView.medicine_name.text = info.name
-            itemView.medicine_stock.text = info.number.toString()
+            medicine_name.text = info.name
+            medicine_stock.text = info.number.toString()
         }
 
     }

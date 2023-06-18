@@ -1,5 +1,6 @@
 package com.example.mcrmedicinereminder
 
+import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -16,24 +17,13 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
-        window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
+        supportActionBar?.hide()
+        onBoardingFinished()
 
 
-        Handler(Looper.getMainLooper()).postDelayed({
-            // Shared Preference Code
-            val pref = getSharedPreferences("login", MODE_PRIVATE)
-            val check = pref.getBoolean("flag", false)
-            if (check) {
-                // for true Login (User already login )
-                startActivity(Intent(this@MainActivity, HomeActivity::class.java))
-                finish()
-            }
-            else{
-                val intent = Intent(this, SignIn::class.java)
-                startActivity(intent)
-                finish()
-            }
-        }, 2000)
-
+    }
+    private fun onBoardingFinished(): Boolean{
+        val sharedPref = application.getSharedPreferences("login", Context.MODE_PRIVATE)
+        return sharedPref.getBoolean("flag",false)
     }
 }
