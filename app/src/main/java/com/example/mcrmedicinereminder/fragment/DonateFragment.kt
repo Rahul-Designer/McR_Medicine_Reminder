@@ -61,7 +61,7 @@ class DonateFragment : Fragment() {
                 anim.start();
             }else{
                 binding.medicineStockTxt.text = "0"
-                Toast.makeText(requireContext(),"Please Add Medicine",Toast.LENGTH_SHORT).show()
+//                Toast.makeText(requireContext(),"Please Add Medicine",Toast.LENGTH_SHORT).show()
             }
         })
 

@@ -49,7 +49,6 @@ class SignIn : AppCompatActivity() {
                         val editor = pref.edit()
                         editor.putBoolean("flag", true)
                         editor.apply()
-
                         startActivity(Intent(this, HomeActivity::class.java))
                         finish()
                     } else {

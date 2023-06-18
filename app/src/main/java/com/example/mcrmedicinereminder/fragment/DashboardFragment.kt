@@ -4,12 +4,16 @@ import android.app.AlertDialog
 import android.app.ProgressDialog
 import android.content.DialogInterface
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.activity.result.ActivityResultCallback
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.bumptech.glide.Glide
@@ -27,6 +31,7 @@ class DashboardFragment : Fragment() {
     private lateinit var database: FirebaseDatabase
     private lateinit var binding: FragmentDashboardBinding
     private lateinit var storageref: FirebaseStorage
+    private var uri: Uri? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -50,6 +55,20 @@ class DashboardFragment : Fragment() {
         progressDialog.setTitle("Please Wait..")
         progressDialog.setMessage("Application is loading, please wait")
         progressDialog.show()
+
+        database.reference.child("users").child(firebaseAuth.currentUser?.uid.toString())
+            .get().addOnSuccessListener {
+                if (it.exists()) {
+                    progressDialog.dismiss()
+                    val name = it.child("name").value
+                    val imageURL = it.child("imageURL").value
+                    binding.userNameTxt.text = "Hello, $name!"
+                    if (imageURL != "null") {
+                        Glide.with(requireContext()).load(imageURL).into(binding.profileImg)
+                    }
+                }
+            }
+
 
         binding.logout.setOnClickListener {
             firebaseAuth.signOut()
@@ -77,30 +96,46 @@ class DashboardFragment : Fragment() {
             builder.show()
         }
 
-        binding.accountTxt.setOnClickListener {
-            val intent = Intent(it.context, AccountActivity::class.java)
-            startActivity(intent)
-        }
+//        binding.accountTxt.setOnClickListener {
+//            val intent = Intent(it.context, AccountActivity::class.java)
+//            startActivity(intent)
+//        }
 
         binding.restoreMedicine.setOnClickListener {
             startActivity(Intent(it.context, RestockMedicineActivity::class.java))
         }
 
-        database.reference.child("users").child(firebaseAuth.currentUser?.uid.toString())
-            .get().addOnSuccessListener {
-                if (it.exists()) {
-                    progressDialog.dismiss()
-                    val userId = it.child("userId").value
-                    val name = it.child("name").value
-                    val email = it.child("email").value
-                    val imageURL = it.child("imageURL").value
+        val galleryImage = registerForActivityResult(
+            ActivityResultContracts.GetContent(), ActivityResultCallback {
+                binding.profileImg.setImageURI(it)
+                if (it != null) {
+                    this.uri = it
+                }
+            })
+        binding.profileImg.setOnClickListener {
+            galleryImage.launch("image/*")
+            updateProfile()
 
-                    binding.userNameTxt.text = "Hello, $name!"
-                    if (imageURL != "null") {
-                        Glide.with(requireContext()).load(imageURL).into(binding.profileImg)
+        }
+    }
+
+    private fun updateProfile() {
+        val reference = storageref.reference.child("Profile")
+            .child(firebaseAuth.currentUser?.uid.toString())
+        uri?.let {
+            reference.putFile(it).addOnCompleteListener{
+                if (it.isSuccessful) {
+                    reference.downloadUrl.addOnSuccessListener {
+                        val imageUrl = it.toString()
+                        val user = mapOf<String, String>("imageURL" to imageUrl)
+                        database.reference.child("users").child(firebaseAuth.currentUser?.uid.toString())
+                            .updateChildren(user).addOnSuccessListener {
+                                Toast.makeText(requireContext(), "Profile is Updated", Toast.LENGTH_SHORT).show()
+                            }
                     }
                 }
             }
+        }
     }
 
 }

@@ -88,6 +88,7 @@ class AccountActivity : AppCompatActivity() {
                     .child(firebaseAuth.currentUser?.uid.toString())
                 uri?.let { it1 ->
                     reference.putFile(it1).addOnCompleteListener {
+                        progressDialog.dismiss()
                         if (it.isSuccessful) {
                             reference.downloadUrl.addOnSuccessListener {
                                 imageUrl = it.toString()
@@ -100,7 +101,7 @@ class AccountActivity : AppCompatActivity() {
     }
 
     private fun updateProfile(progressDialog: ProgressDialog) {
-        progressDialog.dismiss()
+//        progressDialog.dismiss()
         val userId = firebaseAuth.currentUser?.uid.toString()
         val name = binding.nameEdt.text.toString()
         val image = imageUrl

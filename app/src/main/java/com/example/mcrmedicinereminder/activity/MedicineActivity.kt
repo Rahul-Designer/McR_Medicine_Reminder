@@ -3,6 +3,7 @@ package com.example.mcrmedicinereminder.activity
 import android.app.AlarmManager
 import android.app.AlertDialog
 import android.app.Dialog
+import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -12,6 +13,8 @@ import android.content.Intent
 import android.icu.util.Calendar
 import android.os.Build
 import android.os.Bundle
+import android.os.Message
+import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.annotation.RequiresApi
@@ -27,6 +30,11 @@ import com.example.mcrmedicinereminder.model.ReminderViewModelFactory
 import com.example.mcrmedicinereminder.repository.MedicineRepository
 import com.example.mcrmedicinereminder.data.MedicineReminder
 import com.example.mcrmedicinereminder.data.MedicineReminderDatabase
+import kotlinx.android.synthetic.main.activity_medicine.time_one
+import kotlinx.android.synthetic.main.medicine_reminder_recyclerview_item.time
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 
 class MedicineActivity : AppCompatActivity(), MedicineTypesAdapter.OnItemClickListener {
@@ -54,6 +62,7 @@ class MedicineActivity : AppCompatActivity(), MedicineTypesAdapter.OnItemClickLi
     private lateinit var medicineSchedule: String
     private lateinit var medicineInstruction: String
     lateinit var reminderViewModel: ReminderViewModel
+    private val tabletFrequencyFormatter = SimpleDateFormat("hh:mm a", Locale.US)
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -162,6 +171,7 @@ class MedicineActivity : AppCompatActivity(), MedicineTypesAdapter.OnItemClickLi
 
         // Add Button
         binding.addBtn.setOnClickListener {
+            addMedicineNotification("Medicine","Medicine is Added")
             getMedicineDetail()
         }
     }
@@ -207,7 +217,10 @@ class MedicineActivity : AppCompatActivity(), MedicineTypesAdapter.OnItemClickLi
                     // only one time
                     reminderViewModel.insertReminder(MedicineReminder(null,medicineName,medicineImage,Constants.getMedicineType()[medicineImage].name,binding.timeOneTab.text.toString(),stockSize,binding.timeOne.text.toString(),medicineInstruction,false))
 
-                    scheduleNotification(medicineName)
+                    val timeOne = tabletFrequencyFormatter.parse(binding.timeOne.text.toString())
+                    if (timeOne != null) {
+                        scheduleNotification1(medicineName,binding.timeOne.text.toString(),timeOne)
+                    }
 //                    Toast.makeText(
 //                        this,
 //                        "$medicineName\n ${Constants.getMedicineType()[medicineImage].name}\n1\n$stockSize\n$medicineInstruction",
@@ -223,6 +236,14 @@ class MedicineActivity : AppCompatActivity(), MedicineTypesAdapter.OnItemClickLi
                     // second time
                     reminderViewModel.insertReminder(MedicineReminder(null,medicineName,medicineImage,Constants.getMedicineType()[medicineImage].name,binding.timeThreeTab.text.toString(),stockSize,binding.timeThree.text.toString(),medicineInstruction,false))
 
+                    val timeOne = tabletFrequencyFormatter.parse(binding.timeOne.text.toString())
+                    val timeTwo = tabletFrequencyFormatter.parse(binding.timeThree.text.toString())
+                    if (timeOne != null) {
+                        scheduleNotification1(medicineName,binding.timeOne.text.toString(),timeOne)
+                    }
+                    if (timeTwo != null) {
+                        scheduleNotification2(medicineName,binding.timeThree.text.toString(),timeTwo)
+                    }
 //                    Toast.makeText(
 //                        this,
 //                        "$medicineName\n ${Constants.getMedicineType()[medicineImage].name}\n2\n$doseUnit\n $stockSize\n$medicineInstruction",
@@ -240,6 +261,18 @@ class MedicineActivity : AppCompatActivity(), MedicineTypesAdapter.OnItemClickLi
                     // third time
                     reminderViewModel.insertReminder(MedicineReminder(null,medicineName,medicineImage,Constants.getMedicineType()[medicineImage].name,binding.timeThreeTab.text.toString(),stockSize,binding.timeThree.text.toString(),medicineInstruction,false))
 
+                    val timeOne = tabletFrequencyFormatter.parse(binding.timeOne.text.toString())
+                    val timeTwo = tabletFrequencyFormatter.parse(binding.timeTwo.text.toString())
+                    val timeThree = tabletFrequencyFormatter.parse(binding.timeThree.text.toString())
+                    if (timeOne != null) {
+                        scheduleNotification1(medicineName,binding.timeOne.text.toString(),timeOne)
+                    }
+                    if (timeTwo != null) {
+                        scheduleNotification2(medicineName,binding.timeTwo.text.toString(),timeTwo)
+                    }
+//                    if (timeThree != null) {
+//                        scheduleNotification3(medicineName,binding.timeThree.text.toString(),timeThree)
+//                    }
 //                    Toast.makeText(
 //                        this,
 //                        "$medicineName\n ${Constants.getMedicineType()[medicineImage].name}\n3\n$stockSize\n$medicineInstruction",
@@ -390,33 +423,70 @@ class MedicineActivity : AppCompatActivity(), MedicineTypesAdapter.OnItemClickLi
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun createNotificationChannel(){
-        val name = "Notif Channel"
+        val name = "Notify Channel"
+        val name1 = "Notify Channel"
+        val name2 = "Notify Channel"
         val desc = "A Description of the Channel"
-        val importance = NotificationManager.IMPORTANCE_DEFAULT
-        val channel = NotificationChannel(ChannelID,name,importance)
+        val importance = NotificationManager.IMPORTANCE_HIGH
+        val channel = NotificationChannel(Channel1ID,name,importance)
+        channel.lockscreenVisibility = Notification.VISIBILITY_PUBLIC
         channel.description = desc
         val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.createNotificationChannel(channel)
 
+        val channel2 = NotificationChannel(Channel2ID,name1,importance)
+        channel2.lockscreenVisibility = Notification.VISIBILITY_PUBLIC
+        channel2.description = desc
+        channel2.lockscreenVisibility = Notification.VISIBILITY_PUBLIC
+        notificationManager.createNotificationChannel(channel2)
+
+        val channel3 = NotificationChannel(Channel3ID,name2,importance)
+        channel3.lockscreenVisibility = Notification.VISIBILITY_PUBLIC
+        channel3.description = desc
+        channel3.lockscreenVisibility = Notification.VISIBILITY_PUBLIC
+        notificationManager.createNotificationChannel(channel3)
+
     }
-    private fun scheduleNotification(title : String){
+    private fun addMedicineNotification(title : String,message: String){
         val intent = Intent(applicationContext,AlarmReceiver::class.java)
-        val title = title
-        val message = "Please Take Medicine"
         intent.putExtra("titleExtra",title)
         intent.putExtra("messageExtra",message)
-        val pendingIntent = PendingIntent.getBroadcast(applicationContext, NotificationId,intent,PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
-
+        val id = System.currentTimeMillis().toInt()
+        val pendingIntent = PendingIntent.getBroadcast(applicationContext, id,intent,PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
         val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val time = getTime()
         alarmManager.setExactAndAllowWhileIdle(
             AlarmManager.RTC_WAKEUP,time,pendingIntent
         )
     }
+    private fun scheduleNotification1(title: String,time : String,medicineTime : Date){
+        val intent = Intent(applicationContext,AlarmReceiver::class.java)
+        intent.putExtra("titleExtra",title)
+        intent.putExtra("messageExtra","It's $time take your medicine")
+        val id = System.currentTimeMillis().toInt()
+        val pendingIntent = PendingIntent.getBroadcast(applicationContext, id,intent,PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
+        val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        alarmManager.setExactAndAllowWhileIdle(
+            AlarmManager.RTC_WAKEUP,medicineTime.time,pendingIntent
+        )
+        Log.d("RAHUL",medicineTime.toString())
+    }
+    private fun scheduleNotification2(title: String,time : String,medicineTime : Date){
+        val intent = Intent(applicationContext,AlarmReceiver::class.java)
+        intent.putExtra("titleExtra",title)
+        intent.putExtra("messageExtra","It's $time take your medicine")
+        val id = System.currentTimeMillis().toInt()
+        val pendingIntent = PendingIntent.getBroadcast(applicationContext, id,intent,PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
+        val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        alarmManager.setAndAllowWhileIdle(
+            AlarmManager.RTC_WAKEUP,medicineTime.time,pendingIntent
+        )
+        Log.d("RAHUL1",medicineTime.toString())
+    }
 
     private fun getTime() : Long{
         val calendar = Calendar.getInstance()
-        calendar.set(2023,5,18,13,39,0)
+        calendar.set(Calendar.YEAR,Calendar.MONTH,Calendar.DAY_OF_MONTH,Calendar.HOUR,Calendar.MINUTE)
         return calendar.timeInMillis
     }
 
